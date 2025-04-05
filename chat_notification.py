@@ -6,27 +6,6 @@ import subprocess
 import ollama
 OLLAMA_URL = "http://localhost:11434/api/generate"
 
-    # Intent-action mapping
-
-
-# response = ollama.chat(
-#     model="llama3.2:latest",
-#     messages=[{"role": "user", "content": "Hello, how are you?"}]
-# )
-
-# print(response)
-
-
-# def send_message():
-#     user_message = entry.get()
-#     if user_message:
-#         chat_window.insert(tk.END, f"You: {user_message}\n")
-#         entry.delete(0, tk.END)
-#             # Send the message to Ollama API
-#         response = send_to_ollama(user_message)
-#         if response:
-#             chat_window.insert(tk.END, f"AI: {response}\n")
-
 # def send_to_ollama(prompt):
 #     try:
 #         payload = {
@@ -40,11 +19,8 @@ OLLAMA_URL = "http://localhost:11434/api/generate"
 #     except Exception as e:
 #         return f"Error: {str(e)}"
 intent_mapping = {
-        "setup my pc for work": "fucntioncall",
-        "kick started": "fucntioncall",
-        "get started": "fucntioncall",
-        "setup xampp": "fucntioncall",
-        "open project": "fucntioncall",
+    "intent": "start_workflow",
+    "action": "fucntioncall",
     }
 def send_message():
     user_message = entry.get()
@@ -57,7 +33,7 @@ def send_message():
 def stream_ollama(prompt):
     try:
         payload = {
-            "model":  "llama3.2:latest",
+            "model":  "automatestartupmodel:latest",
             "prompt": prompt,
             "stream": True  # Enable streaming
         }
@@ -77,13 +53,8 @@ def stream_ollama(prompt):
 def detect_intent(user_input):
     """Use Ollama to extract intent from user input."""
     response = ollama.chat(
-        model="llama3.2:latest",  # Replace with the actual model name
+        model="automatestartupmodel:latest",  # Replace with the actual model name
         messages=[
-            {"role": "system", "content": "Identify the user's intent from the following list: "
-                                          "'setup my pc for work', 'kick started', 'get started', "
-                                          "'setup xampp', 'open project'. "
-                                          "If the user intent matches one of these, return the exact phrase. "
-                                          "If it does NOT match, return only 'general_query'."},
             {"role": "user", "content": user_input}
         ]
     )
@@ -101,10 +72,22 @@ def execute_action(intent,user_message):
         chat_window.insert(tk.END, "AI: ")  # Start AI response line
         app.update_idletasks()  # Force update UI
 
-     
+    print("Reached here")
+    # if isinstance(intent, dict):
+    #     intent_key = intent.get("intent")
+    #     print("its is a ductionary ")
+    # else:
+    #     intent_key = intent
 
-    if intent in intent_mapping:
-        script_path = intent_mapping[intent]
+    # intent_key = intent.get("intent") if isinstance(intent, dict) else intent
+    # intent_key = intent_key.strip().lower()
+    # intent_value_list = [intent["intent"]]
+    # print(intent_value_list)
+    # print(intent_key)
+    # print(type(intent))
+    # print(intent_mapping)  # Normalize it    
+    if "start_workflow" in intent:
+        script_path = "automating_start_up/cron.py"
         print(f"Executing: {script_path}")
         # subprocess.run([script_path], shell=True)
         return "Your setup has been initiated!"
@@ -121,7 +104,7 @@ def execute_action(intent,user_message):
 def ask_ollama(user_input):
     """Get a natural response from Ollama for general queries."""
     response = ollama.chat(
-        model="llama3.2:latest",
+        model="automatestartupmodel:latest",
         messages=[{"role": "user", "content": user_input}]
     )
     return response['message']['content']
@@ -129,8 +112,8 @@ def ask_ollama(user_input):
     # Get user intent
 # Create the main application window
 app = tk.Tk()
-app.title("Ai Ash Model")
-app.geometry("800x800")
+app.title("Autonomous Model")
+app.geometry("600x600")
 
 # Chat display area
 chat_window = scrolledtext.ScrolledText(app, wrap=tk.WORD, width=50, height=20)
