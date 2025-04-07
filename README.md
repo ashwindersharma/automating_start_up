@@ -14,3 +14,4 @@ insert the model file in the ollama instlaled folder
 then start the project inside the python  environment as two of the libraries installed are accessible from there.
 
 
+pyinstaller --onefile --windowed --name ChatApp chat_notification.py

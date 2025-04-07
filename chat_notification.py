@@ -4,6 +4,7 @@ import requests
 import json
 import subprocess
 import ollama
+from cron import main
 OLLAMA_URL = "http://localhost:11434/api/generate"
 
 # def send_to_ollama(prompt):
@@ -71,26 +72,19 @@ def execute_action(intent,user_message):
 
         chat_window.insert(tk.END, "AI: ")  # Start AI response line
         app.update_idletasks()  # Force update UI
-
-    print("Reached here")
-    # if isinstance(intent, dict):
-    #     intent_key = intent.get("intent")
-    #     print("its is a ductionary ")
-    # else:
-    #     intent_key = intent
-
-    # intent_key = intent.get("intent") if isinstance(intent, dict) else intent
-    # intent_key = intent_key.strip().lower()
-    # intent_value_list = [intent["intent"]]
-    # print(intent_value_list)
-    # print(intent_key)
-    # print(type(intent))
-    # print(intent_mapping)  # Normalize it    
+ 
     if "start_workflow" in intent:
         script_path = "automating_start_up/cron.py"
-        print(f"Executing: {script_path}")
-        # subprocess.run([script_path], shell=True)
-        return "Your setup has been initiated!"
+        chat_window.insert(tk.END, "Starting the Work Environemnt. ") 
+        chat_window.insert(tk.END, "\n") 
+        app.update_idletasks() 
+        response=main() # Force update UI
+        if response == "XampDone":
+            chat_window.insert(tk.END, "AI: ") 
+            chat_window.insert(tk.END, "You can start working now") 
+            chat_window.insert(tk.END, "\n") 
+            entry.delete(0, tk.END)
+            app.update_idletasks()
     else:
            # Send message to Ollama
         for chunk in stream_ollama(user_message):
@@ -116,7 +110,7 @@ app.title("Autonomous Model")
 app.geometry("600x600")
 
 # Chat display area
-chat_window = scrolledtext.ScrolledText(app, wrap=tk.WORD, width=50, height=20)
+chat_window = scrolledtext.ScrolledText(app, wrap=tk.WORD, width=50, height=20,state='disabled')
 chat_window.pack(pady=10)
 
 # Input field

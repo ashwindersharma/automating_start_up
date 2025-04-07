@@ -67,7 +67,6 @@ def send_slack_message(message):
     print(f"Status Code: {response.status_code}")
     print(f"Response: {response.text}")
     print("slack message delivered successfully...")
-    sys.exit()
 
 
     # """Send a message to Slack."""
@@ -79,11 +78,11 @@ def send_slack_message(message):
     # if response.status_code != 200:
     #     print(f"Failed to send message to Slack: {response.status_code}")
 
-
-
-if __name__ == "__main__":
+def main():
     start_xampp_dashboard()
     start_xampp_services()
     # send_slack_message("Xamp has been setup successfully")
-    print("Exiting process...")
-    sys.exit()
+    return "XampDone"
+
+# if __name__ == "__main__":
+#    main()
