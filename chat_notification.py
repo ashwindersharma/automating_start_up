@@ -67,32 +67,42 @@ def execute_action(intent,user_message):
     """Execute script if intent matches, else respond naturally."""
 
     if user_message:
+        chat_window.config(state='normal') 
         chat_window.insert(tk.END, f"You: {user_message}\n")
+        chat_window.config(state='disabled')
         entry.delete(0, tk.END)
-
+        chat_window.config(state='normal')
         chat_window.insert(tk.END, "AI: ")  # Start AI response line
+        chat_window.config(state='disabled')
         app.update_idletasks()  # Force update UI
  
     if "start_workflow" in intent:
         script_path = "automating_start_up/cron.py"
+        chat_window.config(state='normal') 
         chat_window.insert(tk.END, "Starting the Work Environemnt. ") 
         chat_window.insert(tk.END, "\n") 
+        chat_window.config(state='disabled')
         app.update_idletasks() 
         response=main() # Force update UI
         if response == "XampDone":
+            chat_window.config(state='normal') 
             chat_window.insert(tk.END, "AI: ") 
             chat_window.insert(tk.END, "You can start working now") 
             chat_window.insert(tk.END, "\n") 
             entry.delete(0, tk.END)
+            chat_window.config(state='disabled')
             app.update_idletasks()
     else:
            # Send message to Ollama
         for chunk in stream_ollama(user_message):
+            chat_window.config(state='normal') 
             chat_window.insert(tk.END, chunk)
+            chat_window.config(state='disabled')
             chat_window.see(tk.END)  # Auto-scroll
             app.update_idletasks()  # Update UI as response comes in
-
+        chat_window.config(state='normal') 
         chat_window.insert(tk.END, "\n") 
+        chat_window.config(state='disabled')
         # return ask_ollama(intent)  # Handle non-matching intents
 
 def ask_ollama(user_input):
